@@ -1,0 +1,36 @@
+services:
+  server:
+    build: ./server
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+      - CONN_STR=mongodb://mongodb:27017
+    ports:
+      - 3001:3001
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    restart: on-failure
+
+  react-app:
+    build: ./ui
+    environment:
+    - NODE_ENV=production
+    - REACT_APP_SERVER_URL=http://localhost:3001
+    ports:
+      - 3000:3000
+    depends_on:
+      - server
+    links:
+      - server:server
+    restart: on-failure
+
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data/db
+    ports:
+      - 27017:27017

@@ -1,0 +1,5 @@
+/.idea/
+/server/node_modules/
+/ui/node_modules/
+/ui/build/
+/data/
