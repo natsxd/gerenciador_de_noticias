@@ -1,5 +1,6 @@
 const express = require('express');
 const News = require('../db/models/news');
+const ErrorFactory = require("../factory/errorFactory");
 const router = express.Router();
 
 router.get('/', async function(req, res) {
@@ -7,11 +8,7 @@ router.get('/', async function(req, res) {
     const allNews = await News.find();
     res.status(200).send(allNews);
   } catch({ message, stackTrace }) {
-    console.error(stackTrace);
-    res.status(500).send({
-      status: 'error',
-      message
-    });
+    res.status(500).send(ErrorFactory.getError(message));
   }
 });
 
@@ -24,20 +21,14 @@ router.put('/', async function(req, res) {
 
   try {
     if (!url) {
-      res.status(400).send({
-        status: 'error',
-        message: 'Invalid input'
-      });
+      res.status(400).send(ErrorFactory.getError('Invalid input'));
       return;
     }
 
     if (id) {
       const found = await News.findById(id);
       if (!found) {
-        res.status(400).send({
-          status: 'error',
-          message: 'News not found for given id'
-        });
+        res.status(400).send(ErrorFactory.getError('News not found for given id'));
         return;
       }
 
@@ -49,21 +40,14 @@ router.put('/', async function(req, res) {
     }
 
     if (await News.findOne({ url })) {
-      res.status(409).send({
-        status: 'error',
-        message: 'Conflict: news with same url already exists'
-      });
+      res.status(409).send(ErrorFactory.getError('Conflict: news with same url already exists'));
     } else {
       const n = new News({ title, url });
       await n.save();
       res.status(201).send();
     }
   } catch({ message, stackTrace }) {
-    console.error(stackTrace);
-    res.status(500).send({
-      status: 'error',
-      message
-    });
+    res.status(500).send(ErrorFactory.getError(message));
   }
 });
 
@@ -75,19 +59,12 @@ router.delete('/', async function(req, res) {
   try {
     const found = await News.findByIdAndDelete(id);
     if (!found) {
-      res.status(400).send({
-        status: 'error',
-        message: 'News not found for given id'
-      });
+      res.status(400).send(ErrorFactory.getError('News not found for given id'));
       return;
     }
     res.status(204).send();
   } catch({ message, stackTrace }) {
-    console.error(stackTrace);
-    res.status(500).send({
-      status: 'error',
-      message
-    });
+    res.status(500).send(ErrorFactory.getError(message));
   }
 });
 
