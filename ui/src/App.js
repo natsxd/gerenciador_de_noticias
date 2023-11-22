@@ -1,23 +1,41 @@
-import logo from './logo.svg';
+import {useEffect, useState} from 'react';
 import './App.css';
+import Spinner from './components/Spinner/Spinner';
+import newsContext from './context/NewsContext';
+import modalContext from './context/ModalContext';
+import NewsListContainer from "./components/NewsList/NewsListContainer";
+import IFrameModal from "./components/IFrameModal/IFrameModal";
 
-function App() {
+const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [news, setNews] = useState(null);
+  const [isModalOpened, setIsModalOpened] = useState(false);
+  const [modalUrl, setModalUrl] = useState('');
+
+  useEffect(() => {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/news/`)
+      .then((res) => res.json())
+      .then((news) => {
+        setNews(news);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (<Spinner />);
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <newsContext.Provider value={news}>
+        <modalContext.Provider value={{isModalOpened, setIsModalOpened, modalUrl, setModalUrl}}>
+          <NewsListContainer />
+          <IFrameModal
+            isModalOpened={isModalOpened}
+            setIsModalOpened={setIsModalOpened}
+            iFrameUrl={modalUrl}
+          />
+        </modalContext.Provider>
+      </newsContext.Provider>
     </div>
   );
 }
