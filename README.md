@@ -10,7 +10,7 @@ Permite operações CRUD envolvendo notícias
 
 ## Rodando
 
-Para rodar o código, basta executar o seguinte comando na pasta raíz:
+Para rodar o código, basta ter o docker executando, e rodar o seguinte comando na pasta raíz do projeto:
 
 ```
 docker compose up --build
