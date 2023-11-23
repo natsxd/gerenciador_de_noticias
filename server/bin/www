@@ -2,12 +2,12 @@
 const app = require('../app');
 const debug = require('debug')('server:server');
 const http = require('http');
-const mongoose = require('mongoose');
 const setupDB = require('../db/setup');
+const { connect } = require('../db/dbConnection');
 let server;
 let port;
 
-mongoose.connect(`${process.env.CONN_STR}/newsManager`)
+connect()
   .then(() => {
     console.log('Connected to MongoDB');
     setupDB().then(() => {

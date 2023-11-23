@@ -46,8 +46,9 @@ router.put('/', async function(req, res) {
       await n.save();
       res.status(201).send();
     }
-  } catch({ message, stackTrace }) {
-    res.status(500).send(ErrorFactory.getError(message));
+  } catch(e) {
+    console.error(e);
+    res.status(500).send(ErrorFactory.getError(e.message));
   }
 });
 
